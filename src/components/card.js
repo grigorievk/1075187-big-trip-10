@@ -19,20 +19,24 @@ const createOfferItemLayout = (offerList) => {
 };
 
 const getTimeDuration = (date) => {
-  const {dateStart, dateEnd} = date;
-  const dateDiff = new Date(dateEnd - dateStart);
+  const [dateStart, dateEnd] = date;
+  const dateDiff = new Date(dateEnd).getTime() - new Date(dateStart).getTime();
+  const diffInDays = dateDiff / (24 * 60 * 60 * 1000);
+  const diffInHours = (dateDiff / (60 * 60 * 1000)) - (Math.floor(diffInDays) * 24);
+  const diffInMinutes = (dateDiff / (60 * 1000)) - (Math.floor(diffInHours) * 60);
+
   let dateDuration = ``;
 
-  if (dateDiff.getDay()) {
-    dateDuration += (`0${dateDiff.getDay()}D `).slice(-2);
+  if (diffInDays > 0) {
+    dateDuration += (`0${diffInDays}D `).slice(-3);
   }
 
-  if (dateDiff.getHours()) {
-    dateDuration += (`0${dateDiff.getHours()}H `).slice(-2);
+  if (diffInHours > 0) {
+    dateDuration += (`0${diffInHours}H `).slice(-3);
   }
 
-  if (dateDiff.getMinutes()) {
-    dateDuration += (`0${dateDiff.getHours()}M`).slice(-2);
+  if (diffInMinutes > 0) {
+    dateDuration += (`0${diffInMinutes}M`).slice(-3);
   }
 
   return dateDuration.trim();

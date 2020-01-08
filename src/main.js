@@ -6,6 +6,8 @@ import {createCardEditTemplate} from "./components/card-edit";
 import {createCardListContainerTemplate} from "./components/card-list-container";
 import {createCardTemplate} from "./components/card";
 
+
+
 function renderComponent(selector, templateArray, where = `afterend`) {
   const templateList = templateArray.map((t) => {
     let template = t.template();

@@ -9,7 +9,6 @@ export const PointNameList = {
   TAXI: `taxi`,
   TRAIN: `train`,
   TRANSPORT: `transport`,
-  TRIP: `trip`,
 };
 
 export const PointTypeList = [
@@ -53,8 +52,8 @@ export const PointTypeList = [
     name: PointNameList.TRANSPORT,
     isRide: true,
   },
-  {
-    name: PointNameList.TRIP,
-    isRide: true,
-  },
+];
+
+export const DestList = [
+  `Amsterdam`, `Geneva`, `Chamonix`, `Saint Petersburg`
 ];

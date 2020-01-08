@@ -1,8 +1,5 @@
-import {PointTypeList} from "../data/const";
-
-const destList = [
-  `Amsterdam`, `Geneva`, `Chamonix`, `Saint Petersburg`
-];
+import {PointTypeList, DestList} from "../data/const";
+import {capitalize} from "../utils";
 
 const descriptionList = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.
@@ -12,13 +9,6 @@ const descriptionList = [
   `convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.
    In rutrum ac purus sit amet tempus.`
 ];
-
-const capitalize = (s) => {
-  if (typeof s !== `string`) {
-    return ``;
-  }
-  return s.charAt(0).toUpperCase() + s.slice(1);
-};
 
 const getRndArrayItem = (array) => array[getRndIntNumber(array.length)];
 
@@ -64,7 +54,7 @@ const generateImageList = (count) => {
 
 const generatePoint = () => {
   const type = PointTypeList[getRndArrayItem(Object.keys(PointTypeList))].name;
-  const dest = getRndArrayItem(destList);
+  const dest = getRndArrayItem(DestList);
 
   return {
     title: `${capitalize(type)} to ${dest}`,

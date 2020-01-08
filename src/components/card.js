@@ -1,6 +1,10 @@
 import {PointTypeList} from "../data/const";
 
 const createOfferItemLayout = (offerList) => {
+  if (!offerList) {
+    return ``;
+  }
+
   return offerList.map((offer) => {
     const {name, price} = offer;
 
@@ -16,7 +20,7 @@ const createOfferItemLayout = (offerList) => {
 
 const getTimeDuration = (date) => {
   const {dateStart, dateEnd} = date;
-  const dateDiff = dateEnd - dateStart;
+  const dateDiff = new Date(dateEnd - dateStart);
   let dateDuration = ``;
 
   if (dateDiff.getDay()) {
@@ -37,14 +41,16 @@ const getTimeDuration = (date) => {
 export const createCardTemplate = (pointData) => {
   const {title, date, type, offers, price} = pointData;
   const offerList = createOfferItemLayout(offers);
-  const timeStart = `${date[0].getHours()}:${date[0].getMinutes()}`;
-  const timeEnd = `${date[1].getHours()}:${date[1].getMinutes()}`;
+  const dateStart = new Date(date[0]);
+  const dateEnd = new Date(date[1]);
+  const timeStart = `${dateStart.getHours()}:${dateStart.getMinutes()}`;
+  const timeEnd = `${dateEnd.getHours()}:${dateEnd.getMinutes()}`;
   const timeDuration = getTimeDuration(date);
 
   return `<li class="trip-events__item">
             <div class="event">
               <div class="event__type">
-                <img class="event__type-icon" width="42" height="42" src="img/icons/${PointTypeList[type].name}.png" alt="Event type icon">
+                <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
               </div>
               <h3 class="event__title">${title}</h3>
   

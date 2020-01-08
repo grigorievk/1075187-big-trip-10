@@ -26,8 +26,8 @@ const getRndIntNumber = (max, min = 0) => {
   return min + Math.floor((max - min) * Math.random());
 };
 
-const getRndDateStart = () => Date.now() + getRndIntNumber(5, 2) * 24 * 60 * 60 * 1000;
-const getRndDateEnd = () => getRndDateStart + getRndIntNumber(48) * 60 * 60 * 1000;
+const getRndDateStart = () => Date.now() + getRndIntNumber(5, 1) * 24 * 60 * 60 * 1000;
+const getRndDateEnd = () => getRndDateStart() + getRndIntNumber(48) * 60 * 60 * 1000;
 
 const generateOfferList = (type) => {
   const offerList = [
@@ -51,7 +51,7 @@ const generateOfferList = (type) => {
 
   return new Array(getRndIntNumber(2))
     .fill(``)
-    .map(Object.assign({type}, getRndArrayItem(offerList)));
+    .map(() => Object.assign({type}, getRndArrayItem(offerList)));
 };
 
 const generateImageList = (count) => {
@@ -63,7 +63,7 @@ const generateImageList = (count) => {
 };
 
 const generatePoint = () => {
-  const type = getRndArrayItem(Object.keys(PointTypeList)).name;
+  const type = PointTypeList[getRndArrayItem(Object.keys(PointTypeList))].name;
   const dest = getRndArrayItem(destList);
 
   return {

@@ -5,6 +5,7 @@ import {createFilterTemplate} from "./components/filter";
 import {createTripSortTemplate} from "./components/trip-sort";
 import {createCardEditTemplate} from "./components/card-edit";
 import {createCardListContainerTemplate} from "./components/card-list-container";
+import {createCardListItemTemplate} from "./components/card-list-item";
 import {createCardTemplate} from "./components/card";
 
 import {generateMenu} from "./mock/menu.data";
@@ -24,6 +25,11 @@ const daysList = pointListData
                     .filter((item, i, curArr) => i === 0 || (new Date(curArr[i - 1].date[0]).getDate() !== new Date(curArr[i].date[0]).getDate()))
                     .map((item) => item.date[0]);
 
+const dayListData = daysList.map((dayItem) => ({
+  date: dayItem,
+  points: pointListData.slice(1).filter((item) => new Date(item.date[0]).getDate() === new Date(dayItem).getDate())
+}));
+
 function renderComponent(selector, template, placing = `beforeend`) {
   document.querySelector(selector).insertAdjacentHTML(placing, template);
 }
@@ -36,7 +42,13 @@ document.addEventListener(`DOMContentLoaded`, () => {
 
   renderComponent(`.trip-events`, createTripSortTemplate());
   renderComponent(`.trip-events`, createCardEditTemplate(pointListData[0]));
-  renderComponent(`.trip-events`, createCardListContainerTemplate(daysList));
-  pointListData.slice(1).forEach((item) => renderComponent(`.trip-events__list`, createCardTemplate(item)));
+  renderComponent(`.trip-events`, createCardListContainerTemplate());
+
+  dayListData.forEach((dayItem, i) => {
+    renderComponent(`.trip-days`, createCardListItemTemplate(dayItem.date, i));
+    dayItem.points.forEach((point) => {
+      renderComponent(`.trip-days__item:last-child > .trip-events__list`, createCardTemplate(point));
+    });
+  });
 });
 

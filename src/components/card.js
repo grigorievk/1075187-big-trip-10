@@ -1,5 +1,3 @@
-import {PointTypeList} from "../data/const";
-
 const createOfferItemLayout = (offerList) => {
   if (!offerList) {
     return ``;

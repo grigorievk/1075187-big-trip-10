@@ -1,3 +1,5 @@
+import {createElement} from '../utils.js';
+
 const createOfferItemLayout = (offerList) => {
   if (!offerList) {
     return ``;
@@ -40,7 +42,7 @@ const getTimeDuration = (date) => {
   return dateDuration.trim();
 };
 
-export const createCardTemplate = (pointData) => {
+const createCardTemplate = (pointData) => {
   const {title, date, type, offers, price} = pointData;
   const offerList = createOfferItemLayout(offers);
   const dateStart = new Date(date[0]);
@@ -80,3 +82,25 @@ export const createCardTemplate = (pointData) => {
             </div>
           </li>`;
 };
+
+export default class Card {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createCardTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

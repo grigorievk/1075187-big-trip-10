@@ -84,12 +84,13 @@ const createCardTemplate = (pointData) => {
 };
 
 export default class Card {
-  constructor() {
+  constructor(pointData) {
+    this._pointData = pointData;
     this._element = null;
   }
 
   getTemplate() {
-    return createCardTemplate();
+    return createCardTemplate(this._pointData);
   }
 
   getElement() {

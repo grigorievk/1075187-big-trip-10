@@ -7,13 +7,13 @@ const createTripCostTemplate = (total) => {
 };
 
 export default class TripCost {
-  constructor(filters) {
-    this._filters = filters;
+  constructor(total) {
+    this._total = total;
     this._element = null;
   }
 
   getTemplate() {
-    return createTripCostTemplate(this._filters);
+    return createTripCostTemplate(this._total);
   }
 
   getElement() {

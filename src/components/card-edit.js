@@ -95,12 +95,13 @@ const createCardEditTemplate = (pointData) => {
 };
 
 export default class CardEdit {
-  constructor() {
+  constructor(pointData) {
+    this._pointData = pointData;
     this._element = null;
   }
 
   getTemplate() {
-    return createCardEditTemplate();
+    return createCardEditTemplate(this._pointData);
   }
 
   getElement() {

@@ -15,12 +15,13 @@ const createSiteMenuTemplate = (menu) => {
 };
 
 export default class SiteMenu {
-  constructor() {
+  constructor(menu) {
+    this._menu = menu;
     this._element = null;
   }
 
   getTemplate() {
-    return createSiteMenuTemplate();
+    return createSiteMenuTemplate(this._menu);
   }
 
   getElement() {

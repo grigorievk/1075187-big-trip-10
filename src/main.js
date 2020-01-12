@@ -1,12 +1,12 @@
-import {createTripInfoTemplate} from "./components/trip-info";
-import {createTripCostTemplate} from "./components/trip-cost";
-import {createSiteMenuTemplate} from "./components/site-menu";
-import {createFilterTemplate} from "./components/filter";
-import {createTripSortTemplate} from "./components/trip-sort";
-import {createCardEditTemplate} from "./components/card-edit";
-import {createCardListContainerTemplate} from "./components/card-list-container";
-import {createCardListItemTemplate} from "./components/card-list-item";
-import {createCardTemplate} from "./components/card";
+import TripInfoComponent from "./components/trip-info";
+import TripCostComponent from "./components/trip-cost";
+import TripSortComponent from "./components/trip-sort";
+import SiteMenuComponent from "./components/site-menu";
+import FilterComponent from "./components/filter";
+import CardComponent from "./components/card";
+import CardEditComponent from "./components/card-edit";
+import CardListContainerComponent from "./components/card-list-container";
+import CardListItemComponent from "./components/card-list-item";
 
 import {generateMenu} from "./mock/menu.data";
 import {generateFilters} from "./mock/filter.data";
@@ -30,24 +30,30 @@ const dayListData = daysList.map((dayItem) => ({
   points: pointListData.slice(1).filter((item) => new Date(item.date[0]).getDate() === new Date(dayItem).getDate())
 }));
 
-function renderComponent(selector, template, placing = `beforeend`) {
-  document.querySelector(selector).insertAdjacentHTML(placing, template);
-}
-
 document.addEventListener(`DOMContentLoaded`, () => {
-  renderComponent(`.trip-main__trip-info`, createTripInfoTemplate(), `afterbegin`);
-  renderComponent(`.trip-main__trip-info`, createTripCostTemplate(totalCost));
-  renderComponent(`.trip-main__trip-controls h2:nth-of-type(1)`, createSiteMenuTemplate(menuListData));
-  renderComponent(`.trip-main__trip-controls h2:nth-of-type(2)`, createFilterTemplate(filterListData));
+  const tripInfoElement = document.querySelector(`.trip-main__trip-info`);
+  const tripEventsElement = document.querySelector(`.trip-events`);
+  const siteMenuElement = document.querySelector(`.trip-main__trip-controls h2:nth-of-type(1)`);
+  const filterElement = document.querySelector(`.trip-main__trip-controls h2:nth-of-type(2)`);
 
-  renderComponent(`.trip-events`, createTripSortTemplate());
-  renderComponent(`.trip-events`, createCardEditTemplate(pointListData[0]));
-  renderComponent(`.trip-events`, createCardListContainerTemplate());
+  render(tripInfoElement, new TripInfoComponent().getElement(), RenderPosition.AFTERBEGIN);
+  render(tripInfoElement, new TripCostComponent(totalCost).getElement(), RenderPosition.BEFOREEND);
+  render(siteMenuElement, new SiteMenuComponent(menuListData).getElement(), RenderPosition.BEFOREEND);
+  render(filterElement, new FilterComponent(filterListData).getElement(), RenderPosition.BEFOREEND);
+
+  render(tripEventsElement, new TripSortComponent().getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, new CardEditComponent(pointListData[0]).getElement(), RenderPosition.BEFOREEND);
+
+  const cardListContainerComponent = new CardListContainerComponent();
+  render(tripEventsElement, cardListContainerComponent.getElement(), RenderPosition.BEFOREEND);
 
   dayListData.forEach((dayItem, i) => {
-    renderComponent(`.trip-days`, createCardListItemTemplate(dayItem.date, i));
+    const cardListItemComponent = new CardListItemComponent(dayItem.date, i);
+    render(cardListContainerComponent.getElement(), cardListItemComponent.getElement(), RenderPosition.BEFOREEND);
+
     dayItem.points.forEach((point) => {
-      renderComponent(`.trip-days__item:last-child > .trip-events__list`, createCardTemplate(point));
+      const curCardListItem = cardListItemComponent.getElement().querySelector(`.trip-events__list`);
+      render(curCardListItem, new CardComponent(point).getElement(), RenderPosition.BEFOREEND);
     });
   });
 });

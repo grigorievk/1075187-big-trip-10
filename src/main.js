@@ -7,6 +7,7 @@ import CardComponent from "./components/card";
 import CardEditComponent from "./components/card-edit";
 import CardListContainerComponent from "./components/card-list-container";
 import CardListItemComponent from "./components/card-list-item";
+import NoPointsComponent from './components/no-points.js';
 
 import {generateMenu} from "./mock/menu.data";
 import {generateFilters} from "./mock/filter.data";
@@ -31,22 +32,35 @@ const dayListData = daysList.map((dayItem) => ({
 }));
 
 const renderPoint = (curCardListItem, point) => {
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+    if (isEscKey) {
+      replaceEditToPoint();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  const replaceEditToPoint = () => {
+    curCardListItem.replaceChild(cardComponent.getElement(), cardEditComponent.getElement());
+  };
+
+  const replacePointToEdit = () => {
+    curCardListItem.replaceChild(cardEditComponent.getElement(), cardComponent.getElement());
+  };
+
   const cardComponent = new CardComponent(point);
   const cardEditComponent = new CardEditComponent(point);
 
   const editButton = cardComponent.getElement().querySelector(`.event__rollup-btn`);
   editButton.addEventListener(`click`, () => {
-    curCardListItem.replaceChild(cardEditComponent.getElement(), cardComponent.getElement());
+    replacePointToEdit();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   const editForm = cardEditComponent.getElement();
-  editForm.addEventListener(`submit`, () => {
-    curCardListItem.replaceChild(cardComponent.getElement(), cardEditComponent.getElement());
-  });
+  editForm.addEventListener(`submit`, replaceEditToPoint);
 
-  editForm.addEventListener(`reset`, () => {
-    curCardListItem.replaceChild(cardComponent.getElement(), cardEditComponent.getElement());
-  });
+  editForm.addEventListener(`reset`, replaceEditToPoint);
 
   render(curCardListItem, cardComponent.getElement(), RenderPosition.BEFOREEND);
 };
@@ -66,6 +80,10 @@ document.addEventListener(`DOMContentLoaded`, () => {
 
   const cardListContainerComponent = new CardListContainerComponent();
   render(tripEventsElement, cardListContainerComponent.getElement(), RenderPosition.BEFOREEND);
+
+  if (!dayListData.length) {
+    render(cardListContainerComponent.getElement(), new NoPointsComponent().getElement(), RenderPosition.BEFOREEND);
+  }
 
   dayListData.forEach((dayItem, i) => {
     const cardListItemComponent = new CardListItemComponent(dayItem.date, i);

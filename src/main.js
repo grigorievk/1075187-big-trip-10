@@ -12,7 +12,7 @@ import {generateMenu} from "./mock/menu.data";
 import {generateFilters} from "./mock/filter.data";
 import {generatePointList} from "./mock/point.data";
 
-import {getTotalCost} from "./utils";
+import {getTotalCost, render, RenderPosition} from "./utils";
 
 const POINT_COUNT = 10;
 const menuListData = generateMenu();

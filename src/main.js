@@ -30,6 +30,27 @@ const dayListData = daysList.map((dayItem) => ({
   points: pointListData.slice(1).filter((item) => new Date(item.date[0]).getDate() === new Date(dayItem).getDate())
 }));
 
+const renderPoint = (curCardListItem, point) => {
+  const cardComponent = new CardComponent(point);
+  const cardEditComponent = new CardEditComponent(point);
+
+  const editButton = cardComponent.getElement().querySelector(`.event__rollup-btn`);
+  editButton.addEventListener(`click`, () => {
+    curCardListItem.replaceChild(cardEditComponent.getElement(), cardComponent.getElement());
+  });
+
+  const editForm = cardEditComponent.getElement();
+  editForm.addEventListener(`submit`, () => {
+    curCardListItem.replaceChild(cardComponent.getElement(), cardEditComponent.getElement());
+  });
+
+  editForm.addEventListener(`reset`, () => {
+    curCardListItem.replaceChild(cardComponent.getElement(), cardEditComponent.getElement());
+  });
+
+  render(curCardListItem, cardComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
 document.addEventListener(`DOMContentLoaded`, () => {
   const tripInfoElement = document.querySelector(`.trip-main__trip-info`);
   const tripEventsElement = document.querySelector(`.trip-events`);
@@ -42,7 +63,6 @@ document.addEventListener(`DOMContentLoaded`, () => {
   render(filterElement, new FilterComponent(filterListData).getElement(), RenderPosition.BEFOREEND);
 
   render(tripEventsElement, new TripSortComponent().getElement(), RenderPosition.BEFOREEND);
-  render(tripEventsElement, new CardEditComponent(pointListData[0]).getElement(), RenderPosition.BEFOREEND);
 
   const cardListContainerComponent = new CardListContainerComponent();
   render(tripEventsElement, cardListContainerComponent.getElement(), RenderPosition.BEFOREEND);
@@ -53,7 +73,8 @@ document.addEventListener(`DOMContentLoaded`, () => {
 
     dayItem.points.forEach((point) => {
       const curCardListItem = cardListItemComponent.getElement().querySelector(`.trip-events__list`);
-      render(curCardListItem, new CardComponent(point).getElement(), RenderPosition.BEFOREEND);
+      // render(curCardListItem, new CardComponent(point).getElement(), RenderPosition.BEFOREEND);
+      renderPoint(curCardListItem, point);
     });
   });
 });

@@ -1,5 +1,5 @@
 import {PointTypeList, DestList} from "../data/const";
-import {capitalize} from "../utils";
+import {capitalize, createElement} from "../utils";
 
 const createEventTypeList = (type) => {
   return (`
@@ -39,7 +39,7 @@ const createDestListItem = (dest) => {
   `);
 };
 
-export const createCardEditTemplate = (pointData) => {
+const createCardEditTemplate = (pointData) => {
   const {dest, type, date, price} = pointData;
   const eventTypeList = createEventTypeList(type);
   const destList = createDestListItem(dest);
@@ -93,3 +93,26 @@ export const createCardEditTemplate = (pointData) => {
             </header>
           </form>`;
 };
+
+export default class CardEdit {
+  constructor(pointData) {
+    this._pointData = pointData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createCardEditTemplate(this._pointData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

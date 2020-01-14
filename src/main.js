@@ -21,16 +21,6 @@ const filterListData = generateFilters();
 const pointListData = generatePointList(POINT_COUNT);
 const totalCost = getTotalCost(pointListData);
 
-const daysList = pointListData
-                    .sort((a, b) => a.date[0] - b.date[0])
-                    .filter((item, i, curArr) => i === 0 || (new Date(curArr[i - 1].date[0]).getDate() !== new Date(curArr[i].date[0]).getDate()))
-                    .map((item) => item.date[0]);
-
-const dayListData = daysList.map((dayItem) => ({
-  date: dayItem,
-  points: pointListData.slice(1).filter((item) => new Date(item.date[0]).getDate() === new Date(dayItem).getDate())
-}));
-
 document.addEventListener(`DOMContentLoaded`, () => {
   const tripInfoElement = document.querySelector(`.trip-main__trip-info`);
   const tripEventsElement = document.querySelector(`.trip-events`);
@@ -43,6 +33,6 @@ document.addEventListener(`DOMContentLoaded`, () => {
   render(filterElement, new FilterComponent(filterListData), RenderPosition.BEFOREEND);
 
   const tripController = new TripController(tripEventsElement);
-  tripController.render(dayListData);
+  tripController.render(pointListData);
 });
 

@@ -52,16 +52,13 @@ const renderPoint = (curCardListItem, point) => {
   const cardComponent = new CardComponent(point);
   const cardEditComponent = new CardEditComponent(point);
 
-  const editButton = cardComponent.getElement().querySelector(`.event__rollup-btn`);
-  editButton.addEventListener(`click`, () => {
+  cardComponent.setEditButtonClickHandler(() => {
     replacePointToEdit();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  const editForm = cardEditComponent.getElement();
-  editForm.addEventListener(`submit`, replaceEditToPoint);
-
-  editForm.addEventListener(`reset`, replaceEditToPoint);
+  cardEditComponent.setSubmitHandler(replaceEditToPoint);
+  cardEditComponent.setResetHandler(replaceEditToPoint);
 
   render(curCardListItem, cardComponent, RenderPosition.BEFOREEND);
 };

@@ -93,4 +93,9 @@ export default class Card extends AbstractComponent {
   getTemplate() {
     return createCardTemplate(this._pointData);
   }
+
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+  }
 }

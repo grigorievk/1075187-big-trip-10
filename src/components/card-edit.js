@@ -105,4 +105,14 @@ export default class CardEdit extends AbstractComponent {
   getTemplate() {
     return createCardEditTemplate(this._pointData);
   }
+
+  setSubmitHandler(handler) {
+    this.getElement()
+      .addEventListener(`submit`, handler);
+  }
+
+  setResetHandler(handler) {
+    this.getElement()
+      .addEventListener(`reset`, handler);
+  }
 }

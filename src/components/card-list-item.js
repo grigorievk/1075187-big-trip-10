@@ -3,7 +3,8 @@ import AbstractComponent from './abstract-component.js';
 const createCardListItemTemplate = (item, i) => {
   const date = new Date(item);
 
-  return (`<li class="trip-days__item  day">
+  return (
+    `<li class="trip-days__item  day">
       <div class="day__info">
         <span class="day__counter">${i + 1}</span>
         <time class="day__date" datetime="${date.toDateString()}">
@@ -11,7 +12,8 @@ const createCardListItemTemplate = (item, i) => {
         </time>
       </div>
       <ul class="trip-events__list"></ul>
-    </li>`);
+    </li>`
+  );
 };
 
 export default class CardListItem extends AbstractComponent {

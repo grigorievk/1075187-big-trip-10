@@ -3,8 +3,6 @@ import TripCostComponent from "./components/trip-cost";
 import TripSortComponent from "./components/trip-sort";
 import SiteMenuComponent from "./components/site-menu";
 import FilterComponent from "./components/filter";
-import CardComponent from "./components/card";
-import CardEditComponent from "./components/card-edit";
 import CardListContainerComponent from "./components/card-list-container";
 import CardListItemComponent from "./components/card-list-item";
 import NoPointsComponent from './components/no-points.js';
@@ -14,7 +12,8 @@ import {generateFilters} from "./mock/filter.data";
 import {generatePointList} from "./mock/point.data";
 
 import {getTotalCost} from "./utils/common";
-import {render, remove, replace, RenderPosition} from "./utils/render";
+import {render, RenderPosition} from "./utils/render";
+import TripController from "./controllers/trip";
 
 const POINT_COUNT = 10;
 const menuListData = generateMenu();
@@ -32,37 +31,6 @@ const dayListData = daysList.map((dayItem) => ({
   points: pointListData.slice(1).filter((item) => new Date(item.date[0]).getDate() === new Date(dayItem).getDate())
 }));
 
-const renderPoint = (curCardListItem, point) => {
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-    if (isEscKey) {
-      replaceEditToPoint();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  const replaceEditToPoint = () => {
-    replace(cardComponent, cardEditComponent);
-  };
-
-  const replacePointToEdit = () => {
-    replace(cardEditComponent, cardComponent);
-  };
-
-  const cardComponent = new CardComponent(point);
-  const cardEditComponent = new CardEditComponent(point);
-
-  cardComponent.setEditButtonClickHandler(() => {
-    replacePointToEdit();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  cardEditComponent.setSubmitHandler(replaceEditToPoint);
-  cardEditComponent.setResetHandler(replaceEditToPoint);
-
-  render(curCardListItem, cardComponent, RenderPosition.BEFOREEND);
-};
-
 document.addEventListener(`DOMContentLoaded`, () => {
   const tripInfoElement = document.querySelector(`.trip-main__trip-info`);
   const tripEventsElement = document.querySelector(`.trip-events`);
@@ -74,26 +42,7 @@ document.addEventListener(`DOMContentLoaded`, () => {
   render(siteMenuElement, new SiteMenuComponent(menuListData), RenderPosition.BEFOREEND);
   render(filterElement, new FilterComponent(filterListData), RenderPosition.BEFOREEND);
 
-  render(tripEventsElement, new TripSortComponent(), RenderPosition.BEFOREEND);
-
-  const cardListContainerComponent = new CardListContainerComponent();
-  render(tripEventsElement, cardListContainerComponent, RenderPosition.BEFOREEND);
-
-  if (!dayListData.length) {
-    render(cardListContainerComponent.getElement(), new NoPointsComponent(), RenderPosition.BEFOREEND);
-
-    return;
-  }
-
-  dayListData.forEach((dayItem, i) => {
-    const cardListItemComponent = new CardListItemComponent(dayItem.date, i);
-    render(cardListContainerComponent.getElement(), cardListItemComponent, RenderPosition.BEFOREEND);
-
-    dayItem.points.forEach((point) => {
-      const curCardListItem = cardListItemComponent.getElement().querySelector(`.trip-events__list`);
-      // render(curCardListItem, new CardComponent(point).getElement(), RenderPosition.BEFOREEND);
-      renderPoint(curCardListItem, point);
-    });
-  });
+  const tripController = new TripController(tripEventsElement);
+  tripController.render(dayListData);
 });
 

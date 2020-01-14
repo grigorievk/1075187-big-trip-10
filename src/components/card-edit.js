@@ -1,5 +1,6 @@
 import {PointTypeList, DestList} from "../data/const";
-import {capitalize, createElement} from "../utils";
+import {capitalize} from "../utils/common";
+import AbstractComponent from './abstract-component.js';
 
 const createEventTypeList = (type) => {
   return (`
@@ -94,25 +95,24 @@ const createCardEditTemplate = (pointData) => {
           </form>`;
 };
 
-export default class CardEdit {
+export default class CardEdit extends AbstractComponent {
   constructor(pointData) {
+    super();
+
     this._pointData = pointData;
-    this._element = null;
   }
 
   getTemplate() {
     return createCardEditTemplate(this._pointData);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  setSubmitHandler(handler) {
+    this.getElement()
+      .addEventListener(`submit`, handler);
   }
 
-  removeElement() {
-    this._element = null;
+  setResetHandler(handler) {
+    this.getElement()
+      .addEventListener(`reset`, handler);
   }
 }

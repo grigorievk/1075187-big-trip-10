@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createOfferItemLayout = (offerList) => {
   if (!offerList) {
@@ -83,25 +83,19 @@ const createCardTemplate = (pointData) => {
           </li>`;
 };
 
-export default class Card {
+export default class Card extends AbstractComponent {
   constructor(pointData) {
+    super();
+
     this._pointData = pointData;
-    this._element = null;
   }
 
   getTemplate() {
     return createCardTemplate(this._pointData);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
   }
 }

@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createCardListItemTemplate = (item, i) => {
   const date = new Date(item);
@@ -14,26 +14,15 @@ const createCardListItemTemplate = (item, i) => {
     </li>`);
 };
 
-export default class CardListItem {
+export default class CardListItem extends AbstractComponent {
   constructor(item, i) {
+    super();
+
     this._item = item;
     this._i = i;
-    this._element = null;
   }
 
   getTemplate() {
     return createCardListItemTemplate(this._item, this._i);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

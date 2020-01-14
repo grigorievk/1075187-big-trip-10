@@ -13,7 +13,8 @@ import {generateMenu} from "./mock/menu.data";
 import {generateFilters} from "./mock/filter.data";
 import {generatePointList} from "./mock/point.data";
 
-import {getTotalCost, render, RenderPosition} from "./utils";
+import {getTotalCost} from "./utils/common";
+import {render, remove, replace, RenderPosition} from "./utils/render";
 
 const POINT_COUNT = 10;
 const menuListData = generateMenu();
@@ -41,11 +42,11 @@ const renderPoint = (curCardListItem, point) => {
   };
 
   const replaceEditToPoint = () => {
-    curCardListItem.replaceChild(cardComponent.getElement(), cardEditComponent.getElement());
+    replace(cardComponent, cardEditComponent);
   };
 
   const replacePointToEdit = () => {
-    curCardListItem.replaceChild(cardEditComponent.getElement(), cardComponent.getElement());
+    replace(cardEditComponent, cardComponent);
   };
 
   const cardComponent = new CardComponent(point);
@@ -62,7 +63,7 @@ const renderPoint = (curCardListItem, point) => {
 
   editForm.addEventListener(`reset`, replaceEditToPoint);
 
-  render(curCardListItem, cardComponent.getElement(), RenderPosition.BEFOREEND);
+  render(curCardListItem, cardComponent, RenderPosition.BEFOREEND);
 };
 
 document.addEventListener(`DOMContentLoaded`, () => {
@@ -71,23 +72,25 @@ document.addEventListener(`DOMContentLoaded`, () => {
   const siteMenuElement = document.querySelector(`.trip-main__trip-controls h2:nth-of-type(1)`);
   const filterElement = document.querySelector(`.trip-main__trip-controls h2:nth-of-type(2)`);
 
-  render(tripInfoElement, new TripInfoComponent().getElement(), RenderPosition.AFTERBEGIN);
-  render(tripInfoElement, new TripCostComponent(totalCost).getElement(), RenderPosition.BEFOREEND);
-  render(siteMenuElement, new SiteMenuComponent(menuListData).getElement(), RenderPosition.BEFOREEND);
-  render(filterElement, new FilterComponent(filterListData).getElement(), RenderPosition.BEFOREEND);
+  render(tripInfoElement, new TripInfoComponent(), RenderPosition.AFTERBEGIN);
+  render(tripInfoElement, new TripCostComponent(totalCost), RenderPosition.BEFOREEND);
+  render(siteMenuElement, new SiteMenuComponent(menuListData), RenderPosition.BEFOREEND);
+  render(filterElement, new FilterComponent(filterListData), RenderPosition.BEFOREEND);
 
-  render(tripEventsElement, new TripSortComponent().getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, new TripSortComponent(), RenderPosition.BEFOREEND);
 
   const cardListContainerComponent = new CardListContainerComponent();
-  render(tripEventsElement, cardListContainerComponent.getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, cardListContainerComponent, RenderPosition.BEFOREEND);
 
   if (!dayListData.length) {
-    render(cardListContainerComponent.getElement(), new NoPointsComponent().getElement(), RenderPosition.BEFOREEND);
+    render(cardListContainerComponent.getElement(), new NoPointsComponent(), RenderPosition.BEFOREEND);
+
+    return;
   }
 
   dayListData.forEach((dayItem, i) => {
     const cardListItemComponent = new CardListItemComponent(dayItem.date, i);
-    render(cardListContainerComponent.getElement(), cardListItemComponent.getElement(), RenderPosition.BEFOREEND);
+    render(cardListContainerComponent.getElement(), cardListItemComponent, RenderPosition.BEFOREEND);
 
     dayItem.points.forEach((point) => {
       const curCardListItem = cardListItemComponent.getElement().querySelector(`.trip-events__list`);

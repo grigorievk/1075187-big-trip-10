@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createFilterItemLayout = (filter, isChecked) => {
   const {name, title} = filter;
@@ -21,25 +21,14 @@ const createFilterTemplate = (filterList) => {
             </form>`;
 };
 
-export default class Filter {
+export default class Filter extends AbstractComponent {
   constructor(filterList) {
+    super();
+
     this._filterList = filterList;
-    this._element = null;
   }
 
   getTemplate() {
     return createFilterTemplate(this._filterList);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

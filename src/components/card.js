@@ -6,14 +6,14 @@ const createOfferItemLayout = (offerList) => {
   }
 
   return offerList.map((offer) => {
-    const {name, price} = offer;
+    const {name, price, checked} = offer;
 
-    return (
+    return (checked ?
       `<li class="event__offer">
         <span class="event__offer-title">${name}</span>
             &plus;
             &euro;&nbsp;<span class="event__offer-price">${price}</span>
-       </li>`);
+       </li>` : ``);
   })
     .join(`\n`);
 };

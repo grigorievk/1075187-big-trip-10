@@ -1,11 +1,7 @@
 import TripInfoComponent from "./components/trip-info";
 import TripCostComponent from "./components/trip-cost";
-import TripSortComponent from "./components/trip-sort";
 import SiteMenuComponent from "./components/site-menu";
 import FilterComponent from "./components/filter";
-import CardListContainerComponent from "./components/card-list-container";
-import CardListItemComponent from "./components/card-list-item";
-import NoPointsComponent from './components/no-points.js';
 
 import {generateMenu} from "./mock/menu.data";
 import {generateFilters} from "./mock/filter.data";

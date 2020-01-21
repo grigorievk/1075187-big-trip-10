@@ -1,69 +1,44 @@
-import {render, RenderPosition, replace} from "../utils/render";
-import CardComponent from "../components/card";
-import CardEditComponent from "../components/card-edit";
+import {render, RenderPosition} from "../utils/render";
 import NoPointsComponent from "../components/no-points";
 import TripSortComponent, {SortType} from "../components/trip-sort";
 import CardListContainerComponent from "../components/card-list-container";
 import CardListItemComponent from "../components/card-list-item";
+import PointController from "./point";
 
-const renderPoint = (curCardListItem, point) => {
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-    if (isEscKey) {
-      replaceEditToPoint();
-      document.removeEventListener(`keydown`, onEscKeyDown);
+const renderPointList = (cardListContainerElement, pointListData, onDataChange, onViewChange) => {
+  let cardListItemComponent;
+
+  return pointListData.map((item, i) => {
+    if (i === 0 || new Date(item.date[0]).getDate() !== new Date(pointListData[i - 1].date[0]).getDate()) {
+      cardListItemComponent = new CardListItemComponent(item.date[0], i);
+      render(cardListContainerElement, cardListItemComponent, RenderPosition.BEFOREEND);
     }
-  };
 
-  const replaceEditToPoint = () => {
-    replace(cardComponent, cardEditComponent);
-  };
+    const curCardListItem = cardListItemComponent.getElement().querySelector(`.trip-events__list`);
+    const pointController = new PointController(curCardListItem, onDataChange, onViewChange);
+    pointController.render(item);
 
-  const replacePointToEdit = () => {
-    replace(cardEditComponent, cardComponent);
-  };
-
-  const cardComponent = new CardComponent(point);
-  const cardEditComponent = new CardEditComponent(point);
-
-  cardComponent.setEditButtonClickHandler(() => {
-    replacePointToEdit();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  cardEditComponent.setSubmitHandler(replaceEditToPoint);
-  cardEditComponent.setResetHandler(replaceEditToPoint);
-
-  render(curCardListItem, cardComponent, RenderPosition.BEFOREEND);
-};
-
-const renderPointList = (cardListContainerElement, dayListData) => {
-  dayListData.forEach((dayItem, i) => {
-    const cardListItemComponent = new CardListItemComponent(dayItem.date, i);
-    render(cardListContainerElement, cardListItemComponent, RenderPosition.BEFOREEND);
-
-    dayItem.points.forEach((point) => {
-      const curCardListItem = cardListItemComponent.getElement().querySelector(`.trip-events__list`);
-      // render(curCardListItem, new CardComponent(point).getElement(), RenderPosition.BEFOREEND);
-      renderPoint(curCardListItem, point);
-    });
+    return pointController;
   });
 };
-
-const getDayListData = (pointListData, daysList) => daysList.map((dayItem) => (
-  {
-    date: dayItem,
-    points: pointListData.filter((item) => new Date(item.date[0]).getDate() === new Date(dayItem).getDate())
-  })
-);
 
 export default class TripController {
   constructor(container) {
     this._container = container;
 
+    this._pointListData = [];
+    this._sortedDefDayListData = [];
+    this._showedPointControllers = [];
+
     this._noPointsComponent = new NoPointsComponent();
     this._tripSortComponent = new TripSortComponent();
     this._cardListContainerComponent = new CardListContainerComponent();
+
+    this._onDataChange = this._onDataChange.bind(this);
+    this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
+
+    this._tripSortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
   render(pointListData) {
@@ -80,49 +55,55 @@ export default class TripController {
       return;
     }
 
-    const sortedDefDayListData = pointListData
+    this._pointListData = pointListData;
+    this._sortedDefDayListData = pointListData
                                   .slice()
                                   .sort((a, b) => a.date[0] - b.date[0]);
-    const daysList = sortedDefDayListData
-                      .filter((item, i, curArr) => i === 0 || (new Date(curArr[i - 1].date[0]).getDate() !== new Date(curArr[i].date[0]).getDate()))
-                      .map((item) => item.date[0]);
 
-    const dayListData = getDayListData(sortedDefDayListData, daysList);
-    renderPointList(cardListContainerElement, dayListData);
+    // const newPointList = renderPointList(cardListContainerElement, this._dayListData, this._onDataChange, this._onViewChange);
+    const newPointList = renderPointList(cardListContainerElement, this._sortedDefDayListData, this._onDataChange, this._onViewChange);
+    this._showedPointControllers = this._showedPointControllers.concat(newPointList);
+  }
 
-    this._tripSortComponent.setSortTypeChangeHandler((sortType) => {
-      let sortedPointListData = [];
-      let sortedPointList = [];
+  _onDataChange(pointController, oldData, newData) {
+    const index = this._pointListData.findIndex((it) => it === oldData);
 
-      switch (sortType) {
-        case SortType.TIME:
-          sortedPointListData = pointListData
-                                  .slice()
-                                  .sort((a, b) => (b.date[1] - b.date[0]) - (a.date[1] - a.date[0]));
-          sortedPointList = sortedPointListData
-                              .filter((item, i, curArr) => i === 0 || (new Date(curArr[i - 1].date[0]).getDate() !== new Date(curArr[i].date[0]).getDate()))
-                              .map((item) => item.date[0]);
-          break;
-        case SortType.PRICE:
-          sortedPointListData = pointListData
-                                .slice()
-                                .sort((a, b) => b.price - a.price);
-          sortedPointList = sortedPointListData
-                              .filter((item, i, curArr) => i === 0 || (new Date(curArr[i - 1].date[0]).getDate() !== new Date(curArr[i].date[0]).getDate()))
-                              .map((item) => item.date[0]);
-          break;
-        case SortType.DEFAULT:
-          sortedPointListData = sortedDefDayListData;
-          sortedPointList = daysList;
-          break;
-      }
+    if (index === -1) {
+      return;
+    }
 
-      cardListContainerElement.innerHTML = ``;
+    this._pointListData = [].concat(this._pointListData.slice(0, index), newData, this._pointListData.slice(index + 1));
 
-      const sortedDayListData = getDayListData(sortedPointListData, sortedPointList);
-      renderPointList(cardListContainerElement, sortedDayListData);
-    });
+    pointController.render(this._pointListData[index]);
+  }
 
+  _onViewChange() {
+    this._showedPointControllers.forEach((it) => it.setDefaultView());
+  }
 
+  _onSortTypeChange(sortType) {
+    let sortedPointListData = [];
+
+    switch (sortType) {
+      case SortType.TIME:
+        sortedPointListData = this._pointListData
+          .slice()
+          .sort((a, b) => (b.date[1] - b.date[0]) - (a.date[1] - a.date[0]));
+        break;
+      case SortType.PRICE:
+        sortedPointListData = this._pointListData
+          .slice()
+          .sort((a, b) => b.price - a.price);
+        break;
+      case SortType.DEFAULT:
+        sortedPointListData = this._sortedDefDayListData;
+        break;
+    }
+
+    const cardListContainerElement = this._cardListContainerComponent.getElement();
+
+    cardListContainerElement.innerHTML = ``;
+
+    this._showedPointControllers = renderPointList(cardListContainerElement, sortedPointListData, this._onDataChange, this._onViewChange);
   }
 }

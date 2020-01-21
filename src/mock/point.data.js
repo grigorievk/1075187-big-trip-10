@@ -23,25 +23,38 @@ const generateOfferList = (type) => {
   const offerList = [
     {
       name: `Add luggage`,
-      price: `10`
+      price: `10`,
+      checked: false
     },
     {
       name: `Switch to comfort class`,
-      price: `150`
+      price: `150`,
+      checked: false
     },
     {
       name: `Add meal`,
-      price: `2`
+      price: `2`,
+      checked: false
     },
     {
       name: `Choose seats`,
-      price: `9`
+      price: `9`,
+      checked: false
     },
   ];
 
-  return new Array(getRndIntNumber(2))
-    .fill(``)
-    .map(() => Object.assign({type}, getRndArrayItem(offerList)));
+  const checkedItemList = [getRndArrayItem(offerList), getRndArrayItem(offerList)];
+  for (let item of checkedItemList) {
+    item.checked = true;
+  }
+
+  return offerList.map((item) => {
+    const checkedItem = checkedItemList.find((cItem) => cItem.name === item.name);
+
+    item = checkedItem || item;
+
+    return Object.assign({type}, item);
+  });
 };
 
 const generateImageList = (count) => {

@@ -44,7 +44,9 @@ const generateOfferList = (type) => {
   ];
 
   const checkedItemList = [getRndArrayItem(offerList), getRndArrayItem(offerList)];
-  checkedItemList.forEach((item) => item.checked = true);
+  for (let item of checkedItemList) {
+    item.checked = true;
+  }
 
   return offerList.map((item) => {
     const checkedItem = checkedItemList.find((cItem) => cItem.name === item.name);

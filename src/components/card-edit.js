@@ -217,6 +217,6 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   _subscribeOnEvents() {
-    const element = this.getElement();
+    // const element = this.getElement();
   }
 }

@@ -39,15 +39,16 @@ export default class PointController {
           isArchive: !point.isArchive,
         }));
       });
-
-      this._cardComponent.setFavoritesButtonClickHandler(() => {
-        this._onDataChange(this, point, Object.assign({}, point, {
-          isFavorite: !point.isFavorite,
-        }));
-      });
   */
 
+    this._cardEditComponent.setFavoritesButtonClickHandler(() => {
+      this._onDataChange(this, point, Object.assign({}, point, {
+        isFavorite: !point.isFavorite,
+      }));
+    });
+
     this._cardEditComponent.setSubmitHandler(() => this._replaceEditToPoint());
+    this._cardEditComponent.setCancelHandler(() => this._replaceEditToPoint());
     this._cardEditComponent.setResetHandler(() => this._replaceEditToPoint());
 
     if (oldCardEditComponent && oldCardComponent) {
@@ -65,7 +66,7 @@ export default class PointController {
   }
 
   _replaceEditToPoint() {
-    this._taskEditComponent.reset();
+    this._cardEditComponent.reset();
 
     replace(this._cardComponent, this._cardEditComponent);
     this._mode = Mode.DEFAULT;

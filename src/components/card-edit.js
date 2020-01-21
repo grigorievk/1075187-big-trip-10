@@ -1,6 +1,6 @@
 import {PointTypeList, DestList} from "../data/const";
 import {capitalize} from "../utils/common";
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 
 const createEventTypeList = (type) => {
   return (
@@ -158,24 +158,65 @@ const createCardEditTemplate = (pointData) => {
           </form>`;
 };
 
-export default class CardEdit extends AbstractComponent {
+export default class CardEdit extends AbstractSmartComponent {
   constructor(pointData) {
     super();
 
     this._pointData = pointData;
+
+    this._submitHandler = null;
+    this._resetHandler = null;
+    this._cancelHandler = null;
+    this._favoritesHandler = null;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
     return createCardEditTemplate(this._pointData);
   }
 
+  recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
+    this.setResetHandler(this._resetHandler);
+    this.setCancelHandler(this._cancelHandler);
+    this.setFavoritesButtonClickHandler(this._favoritesHandler);
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  reset() {
+    this.rerender();
+  }
+
   setSubmitHandler(handler) {
     this.getElement()
       .addEventListener(`submit`, handler);
+    this._submitHandler = handler;
   }
 
   setResetHandler(handler) {
     this.getElement()
       .addEventListener(`reset`, handler);
+    this._resetHandler = null;
+  }
+
+  setCancelHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+    this._cancelHandler = handler;
+  }
+
+  setFavoritesButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-btn`)
+      .addEventListener(`click`, handler);
+    this._favoritesHandler = handler;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
   }
 }
